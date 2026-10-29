@@ -56,7 +56,15 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
                 <p className="mt-6 max-w-md text-muted">{product.description}</p>
 
                 <div className="mt-10">
-                    <SizeSelector variants={product.variants} />
+                    <SizeSelector
+                        product={{
+                            slug: product.slug,
+                            name: product.name,
+                            priceCents: product.priceCents,
+                            currency: product.currency,
+                        }}
+                        variants={product.variants}
+                    />
                 </div>
             </div>
         </section>

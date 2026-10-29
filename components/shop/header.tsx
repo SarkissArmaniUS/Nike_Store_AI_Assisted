@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CartLink } from "./cart-link";
 
 const links = [
     { href: "/products", label: "Shop" },
@@ -20,9 +21,11 @@ export function Header() {
                         </Link>
                     ))}
                 </nav>
-                <Link href="/cart" className="text-sm transition-colors hover:text-accent">
-                    Cart (0)
-                </Link>
+
+                <CartLink />
+                {/*<Link href="/cart" className="text-sm transition-colors hover:text-accent">*/}
+                {/*    Cart (0)*/}
+                {/*</Link>*/}
             </div>
         </header>
     );
