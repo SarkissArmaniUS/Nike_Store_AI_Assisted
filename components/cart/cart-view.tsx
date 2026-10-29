@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useCart } from "./use-cart";
 import { MAX_QTY } from "./cart-store";
@@ -7,6 +8,27 @@ import { formatPrice } from "@/components/shop/product-card";
 
 export function CartView() {
     const { items, subtotalCents, setQty, removeItem } = useCart();
+
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    async function handleCheckout() {
+        setLoading(true);
+        setError(null);
+        try {
+            const res = await fetch("/api/checkout", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ items: items.map((i) => ({ sku: i.sku, qty: i.qty })) }),
+            });
+            const data = await res.json();
+            if (!res.ok || !data.url) throw new Error(data.error ?? "Checkout failed");
+            window.location.href = data.url;
+        } catch (e) {
+            setError(e instanceof Error ? e.message : "Checkout failed");
+            setLoading(false);
+        }
+    }
 
     if (items.length === 0) {
         return (
@@ -75,11 +97,13 @@ export function CartView() {
                 <p className="mt-2 text-xs text-muted">Shipping and taxes are calculated at checkout.</p>
                 <button
                     type="button"
-                    disabled
-                    className="mt-6 w-full bg-ink py-4 text-sm text-paper disabled:bg-line disabled:text-muted"
+                    onClick={handleCheckout}
+                    disabled={loading}
+                    className="mt-6 w-full bg-ink py-4 text-sm text-paper transition-colors hover:bg-accent disabled:cursor-wait disabled:bg-line disabled:text-muted"
                 >
-                    Checkout (next step)
+                    {loading ? "Redirecting..." : "Checkout"}
                 </button>
+                {error && <p role="alert" className="mt-3 text-sm text-accent">{error}</p>}
             </aside>
         </div>
     );
