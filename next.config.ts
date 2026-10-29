@@ -5,8 +5,9 @@ const nextConfig: NextConfig = {
   experimental: {
     agentFeedback: true,
   },
-  cacheComponents: true,
-  partialPrefetching: true,
+  // // Each request to Atlas MongoDB without cache
+  // cacheComponents: true,
+  // partialPrefetching: true,
   turbopack: {
     rules: {
       "*.css": {
