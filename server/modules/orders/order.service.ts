@@ -51,8 +51,14 @@ export async function createPendingOrder(lines: Line[]): Promise<CreatedOrder> {
     const items: OrderItem[] = lines.map((l) => {
         const found = bySku.get(l.sku);
         if (!found) throw new CheckoutError(`Unknown item: ${l.sku}`);
-        const { currency: _currency, ...item } = found;
-        return { ...item, qty: l.qty };
+        return {
+            sku: found.sku,
+            slug: found.slug,
+            name: found.name,
+            size: found.size,
+            unitPriceCents: found.unitPriceCents,
+            qty: l.qty,
+        };
     });
 
     const currencies = new Set(lines.map((l) => bySku.get(l.sku)!.currency));
