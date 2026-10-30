@@ -117,3 +117,32 @@ export async function cancelPendingOrder(orderId: string) {
         await session.endSession();
     }
 }
+
+export type PaidResult = "paid" | "already_processed" | "not_found" | "mismatch";
+
+// Лише pending -> paid. Повторний виклик нічого не змінює, тому ідемпотентний.
+export async function markOrderPaid(
+    orderId: string,
+    data: { amountTotal: number | null; currency: string | null; paymentIntentId?: string; email?: string },
+): Promise<PaidResult> {
+    await connectDB();
+    const order = await Order.findById(orderId);
+    if (!order) return "not_found";
+
+    // Сума й валюта від Stripe мають збігатися з тим, що ми порахували на сервері
+    if (data.amountTotal !== order.totalCents || data.currency?.toLowerCase() !== order.currency) {
+        console.error("Payment mismatch", { orderId, expected: order.totalCents, got: data.amountTotal });
+        return "mismatch";
+    }
+
+    const updated = await Order.findOneAndUpdate(
+        { _id: orderId, status: "pending" },
+        { status: "paid", stripePaymentIntentId: data.paymentIntentId, email: data.email },
+    );
+
+    if (!updated && order.status === "cancelled") {
+        // Гроші прийшли за скасоване замовлення: потрібне ручне повернення коштів
+        console.error("Paid after cancel, refund needed", { orderId });
+    }
+    return updated ? "paid" : "already_processed";
+}
