@@ -19,7 +19,6 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Invalid cart" }, { status: 400 });
     }
 
-    // Об'єднуємо дублікати sku
     const merged = new Map<string, number>();
     for (const { sku, qty } of parsed.data.items) merged.set(sku, (merged.get(sku) ?? 0) + qty);
     const lines = [...merged].map(([sku, qty]) => ({ sku, qty: Math.min(qty, 10) }));

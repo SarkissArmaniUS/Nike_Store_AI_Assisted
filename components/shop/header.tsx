@@ -23,9 +23,6 @@ export function Header() {
                 </nav>
 
                 <CartLink />
-                {/*<Link href="/cart" className="text-sm transition-colors hover:text-accent">*/}
-                {/*    Cart (0)*/}
-                {/*</Link>*/}
             </div>
         </header>
     );

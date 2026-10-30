@@ -8,7 +8,6 @@ export function formatPrice(cents: number, currency = "usd") {
 export function ProductCard({ product }: { product: ProductDTO }) {
     return (
         <Link href={`/products/${product.slug}`} className="group block">
-            {/* Заміниш на next/image, коли з'являться фото */}
             <div className="aspect-[4/5] w-full bg-paper-2 transition-colors group-hover:bg-line" />
             <div className="mt-4 flex items-baseline justify-between gap-4">
                 <h3 className="font-display text-2xl tracking-tight">{product.name}</h3>
