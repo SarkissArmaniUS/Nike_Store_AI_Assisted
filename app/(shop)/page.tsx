@@ -18,7 +18,6 @@ export default function HomePage() {
                     Explore running
                 </Link>
             </div>
-            {/* Заміниш на next/image, коли з'явиться фото в public/ */}
             <div className="mt-16 aspect-[16/9] w-full bg-paper-2" />
         </section>
     );

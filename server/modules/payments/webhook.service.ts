@@ -24,6 +24,6 @@ export async function handleStripeEvent(event: Stripe.Event) {
             return;
         }
         default:
-            return; // інші події ігноруємо
+            return;
     }
 }

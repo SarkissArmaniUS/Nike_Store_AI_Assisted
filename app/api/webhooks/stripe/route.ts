@@ -15,7 +15,6 @@ export async function POST(req: Request) {
     const signature = req.headers.get("stripe-signature");
     if (!signature) return NextResponse.json({ error: "Missing signature" }, { status: 400 });
 
-    // Підпис рахується з сирого тіла, тому читаємо text(), а не json()
     const body = await req.text();
 
     let event: Stripe.Event;
@@ -30,6 +29,6 @@ export async function POST(req: Request) {
         return NextResponse.json({ received: true });
     } catch (e) {
         console.error("Webhook handler failed", event.id, e);
-        return NextResponse.json({ error: "Handler failed" }, { status: 500 }); // Stripe повторить доставку
+        return NextResponse.json({ error: "Handler failed" }, { status: 500 });
     }
 }
