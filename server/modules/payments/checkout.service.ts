@@ -10,6 +10,8 @@ export async function createCheckoutSession(lines: Line[]): Promise<string> {
         const session = await stripe.checkout.sessions.create(
             {
                 mode: "payment",
+                allowed_payment_method_types: ["card"],
+                adaptive_pricing: { enabled: false },
                 client_reference_id: order.id,
                 metadata: { orderId: order.id },
                 line_items: order.items.map((i) => ({
