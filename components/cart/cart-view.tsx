@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useCart } from "./use-cart";
 import { MAX_QTY } from "./cart-store";
 import { formatPrice } from "@/components/shop/product-card";
+import { ShoeArt } from "@/components/shop/shoe-art";
 
 export function CartView() {
     const { items, subtotalCents, setQty, removeItem } = useCart();
@@ -46,7 +47,10 @@ export function CartView() {
             <ul className="divide-y divide-line border-y border-line">
                 {items.map((item) => (
                     <li key={item.sku} className="flex gap-6 py-6">
-                        <div className="aspect-[4/5] w-24 shrink-0 bg-paper-2" />
+                        <div className="relative aspect-[4/5] w-24 shrink-0 overflow-hidden">
+                            <ShoeArt seed={item.slug} />
+                        </div>
+                        {/*<div className="aspect-[4/5] w-24 shrink-0 bg-paper-2" />*/}
                         <div className="flex flex-1 flex-col justify-between">
                             <div className="flex items-start justify-between gap-4">
                                 <div>

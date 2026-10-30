@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ShoeArt } from "@/components/shop/shoe-art";
 
 export default function HomePage() {
     return (
@@ -18,7 +19,10 @@ export default function HomePage() {
                     Explore running
                 </Link>
             </div>
-            <div className="mt-16 aspect-[16/9] w-full bg-paper-2" />
+            <div className="relative mt-16 aspect-[16/9] w-full overflow-hidden">
+                <ShoeArt seed="northline-hero" svgClassName="w-1/2 max-w-xl" />
+            </div>
+            {/*<div className="mt-16 aspect-[16/9] w-full bg-paper-2" />*/}
         </section>
     );
 }

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { formatPrice } from "@/components/shop/product-card";
 import { SizeSelector } from "@/components/shop/size-selector";
 import { getProductBySlug } from "@/server/modules/products/product.service";
+import { ProductImage } from "@/components/shop/product-image";
 
 export async function generateMetadata({ params }: PageProps<"/products/[slug]">): Promise<Metadata> {
     const { slug } = await params;
@@ -46,8 +47,16 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
             />
 
+            <ProductImage
+                src={product.images[0]}
+                alt={product.name}
+                slug={product.slug}
+                sizes="(min-width: 768px) 50vw, 100vw"
+                priority
+            />
+
             {/* Заміниш на next/image, коли з'являться фото */}
-            <div className="aspect-[4/5] w-full bg-paper-2" />
+            {/*<div className="aspect-[4/5] w-full bg-paper-2" />*/}
 
             <div className="md:pt-8">
                 <p className="text-xs uppercase tracking-[0.2em] text-muted">{product.category}</p>
