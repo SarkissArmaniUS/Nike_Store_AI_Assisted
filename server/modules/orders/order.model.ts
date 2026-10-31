@@ -22,6 +22,7 @@ const orderSchema = new Schema(
         stripeSessionId: { type: String, unique: true, sparse: true },
         stripePaymentIntentId: { type: String },
         email: { type: String },
+        userId: { type: String, index: true },
         expiresAt: { type: Date },
     },
     { timestamps: true },

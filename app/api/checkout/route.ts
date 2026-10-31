@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { CheckoutError } from "@/server/modules/orders/order.service";
 import { createCheckoutSession } from "@/server/modules/payments/checkout.service";
+import { auth } from "@/server/lib/auth";
 
 export const runtime = "nodejs";
 
@@ -24,7 +25,9 @@ export async function POST(req: Request) {
     const lines = [...merged].map(([sku, qty]) => ({ sku, qty: Math.min(qty, 10) }));
 
     try {
-        const url = await createCheckoutSession(lines);
+        const session = await auth.api.getSession({ headers: req.headers });
+        const url = await createCheckoutSession(lines, session?.user.id, session?.user.email);
+        // const url = await createCheckoutSession(lines);
         return NextResponse.json({ url });
     } catch (e) {
         if (e instanceof CheckoutError) {

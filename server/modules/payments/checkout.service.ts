@@ -2,8 +2,10 @@ import { stripe } from "../../lib/stripe";
 import { Order } from "../orders/order.model";
 import { cancelPendingOrder, createPendingOrder, type Line } from "../orders/order.service";
 
-export async function createCheckoutSession(lines: Line[]): Promise<string> {
-    const order = await createPendingOrder(lines);
+// export async function createCheckoutSession(lines: Line[], userId?: string): Promise<string> {
+//     const order = await createPendingOrder(lines, userId);
+export async function createCheckoutSession(lines: Line[], userId?: string, email?: string): Promise<string> {
+    const order = await createPendingOrder(lines, userId);
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
     try {
@@ -13,6 +15,7 @@ export async function createCheckoutSession(lines: Line[]): Promise<string> {
                 allowed_payment_method_types: ["card"],
                 adaptive_pricing: { enabled: false },
                 client_reference_id: order.id,
+                ...(email ? { customer_email: email } : {}),
                 metadata: { orderId: order.id },
                 line_items: order.items.map((i) => ({
                     quantity: i.qty,

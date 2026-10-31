@@ -9,9 +9,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed": "tsx --env-file=.env.local scripts/seed.ts"
+    "seed": "tsx --env-file=.env.local scripts/seed.ts",
+    "stripe:listen": "stripe listen -e checkout.session.completed,checkout.session.expired -f localhost:3000/api/webhooks/stripe"
   },
   "dependencies": {
+    "@better-auth/mongo-adapter": "^1.7.14",
     "@stripe/stripe-js": "^10.2.0",
     "better-auth": "^1.7.14",
     "dotenv": "^18.0.9",
