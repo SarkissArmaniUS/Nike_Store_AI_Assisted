@@ -13,6 +13,7 @@
     "lint": "eslint",
     "seed": "tsx --env-file=.env.local scripts/seed.ts",
     "make-admin": "tsx --env-file=.env.local scripts/make-admin.ts",
+    "set-images": "tsx --env-file=.env.local scripts/set-images.ts",
     "stripe:listen": "stripe listen -e checkout.session.completed,checkout.session.expired -f localhost:3000/api/webhooks/stripe"
   },
   "dependencies": {
