@@ -3,7 +3,6 @@ import { z } from "zod";
 import { ProductCard } from "@/components/shop/product-card";
 import { CATEGORIES } from "@/server/modules/products/product.model";
 import { listProducts } from "@/server/modules/products/product.service";
-import { Reveal } from "@/components/ui/reveal"
 
 export const metadata = { title: "Shop" };
 
@@ -18,14 +17,18 @@ export default async function ProductsPage({ searchParams }: PageProps<"/product
 
     return (
         <section className="mx-auto max-w-7xl px-6 py-16">
-            <h1 className="font-display text-5xl tracking-tight md:text-7xl">Shop</h1>
+            <h1 className="font-display text-6xl md:text-8xl">Shop</h1>
 
             <nav className="mt-8 flex gap-6 border-b border-line pb-4 text-sm capitalize">
                 {tabs.map((t) => (
                     <Link
                         key={t.label}
                         href={t.value ? `/products?category=${t.value}` : "/products"}
-                        className={t.value === category ? "text-ink underline underline-offset-8" : "text-muted hover:text-ink"}
+                        className={
+                            t.value === category
+                                ? "text-ink underline decoration-accent decoration-2 underline-offset-8"
+                                : "text-muted hover:text-ink"
+                        }
                     >
                         {t.label}
                     </Link>
@@ -36,14 +39,9 @@ export default async function ProductsPage({ searchParams }: PageProps<"/product
                 <p className="mt-16 text-muted">No products found.</p>
             ) : (
                 <div className="mt-12 grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3">
-                    {products.map((p, i) => (
-                        <Reveal key={p.id} delay={(i % 3) * 0.06}>
-                            <ProductCard product={p} />
-                        </Reveal>
+                    {products.map((p) => (
+                        <ProductCard key={p.id} product={p} />
                     ))}
-                    {/*{products.map((p) => (*/}
-                    {/*    <ProductCard key={p.id} product={p} />*/}
-                    {/*))}*/}
                 </div>
             )}
         </section>
