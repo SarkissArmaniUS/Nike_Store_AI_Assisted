@@ -29,7 +29,7 @@ function load() {
         const parsed = z.array(itemSchema).safeParse(JSON.parse(raw));
         if (parsed.success) items = parsed.data;
     } catch {
-        // пошкоджені дані ігноруємо, кошик буде порожнім
+        // Ignore corrupted data, cart will be empty
     }
 }
 
@@ -38,7 +38,7 @@ function commit(next: CartItem[]) {
     try {
         localStorage.setItem(KEY, JSON.stringify(items));
     } catch {
-        // сховище може бути недоступне (приватний режим)
+        // Storage may be unavailable (private mode)
     }
     listeners.forEach((l) => l());
 }
