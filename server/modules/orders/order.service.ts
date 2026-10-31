@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { connectDB } from "../../lib/db";
 import { Product } from "../products/product.model";
 import { Order } from "./order.model";
+import type { OrderStatus } from "./status";
 
 export class CheckoutError extends Error {
     constructor(
@@ -25,7 +26,7 @@ export type OrderItem = {
 
 export type CreatedOrder = { id: string; currency: string; totalCents: number; items: OrderItem[] };
 
-export async function createPendingOrder(lines: Line[]): Promise<CreatedOrder> {
+export async function createPendingOrder(lines: Line[], userId?: string): Promise<CreatedOrder> {
     await connectDB();
 
     const skus = lines.map((l) => l.sku);
@@ -82,7 +83,7 @@ export async function createPendingOrder(lines: Line[]): Promise<CreatedOrder> {
             }
 
             const [created] = await Order.create(
-                [{ items, totalCents, currency, expiresAt: new Date(Date.now() + 31 * 60 * 1000) }],
+                [{ items, totalCents, currency, userId, expiresAt: new Date(Date.now() + 31 * 60 * 1000) }],
                 { session },
             );
             result = { id: String(created._id), currency, totalCents, items };
@@ -144,4 +145,37 @@ export async function markOrderPaid(
         console.error("Paid after cancel, refund needed", { orderId });
     }
     return updated ? "paid" : "already_processed";
+}
+
+export type OrderSummary = {
+    id: string;
+    createdAt: string;
+    status: OrderStatus;
+    totalCents: number;
+    currency: string;
+    items: OrderItem[];
+};
+
+export async function listOrdersForUser(userId: string): Promise<OrderSummary[]> {
+    await connectDB();
+    const docs = await Order.find({ userId, status: { $in: ["paid", "shipped", "refunded"] } })
+        .sort({ createdAt: -1 })
+        .limit(50)
+        .lean();
+
+    return docs.map((d) => ({
+        id: String(d._id),
+        createdAt: d._id.getTimestamp().toISOString(),
+        status: d.status as OrderStatus,
+        totalCents: d.totalCents,
+        currency: d.currency,
+        items: d.items.map((i) => ({
+            sku: i.sku,
+            slug: i.slug,
+            name: i.name,
+            size: i.size,
+            unitPriceCents: i.unitPriceCents,
+            qty: i.qty,
+        })),
+    }));
 }

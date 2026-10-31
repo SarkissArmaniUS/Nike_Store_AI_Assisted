@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { AccountLink } from "./account-link";
 import { CartLink } from "./cart-link";
 
 const links = [
@@ -29,6 +30,7 @@ export function Header() {
                 </nav>
 
                 <div className="flex items-center gap-5">
+                    <AccountLink />
                     <CartLink />
                     <button
                         type="button"
@@ -62,33 +64,3 @@ export function Header() {
         </header>
     );
 }
-
-// import Link from "next/link";
-// import { CartLink } from "./cart-link";
-//
-// const links = [
-//     { href: "/products", label: "Shop" },
-//     { href: "/products?category=running", label: "Running" },
-//     { href: "/products?category=lifestyle", label: "Lifestyle" },
-// ];
-//
-// export function Header() {
-//     return (
-//         <header className="sticky top-0 z-40 border-b border-line bg-paper/85 backdrop-blur">
-//             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-//                 <Link href="/" className="font-display text-2xl tracking-tight">
-//                     Northline
-//                 </Link>
-//                 <nav className="hidden gap-8 text-sm md:flex">
-//                     {links.map((l) => (
-//                         <Link key={l.href} href={l.href} className="text-muted transition-colors hover:text-ink">
-//                             {l.label}
-//                         </Link>
-//                     ))}
-//                 </nav>
-//
-//                 <CartLink />
-//             </div>
-//         </header>
-//     );
-// }
