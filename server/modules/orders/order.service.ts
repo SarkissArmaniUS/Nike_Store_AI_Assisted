@@ -179,3 +179,67 @@ export async function listOrdersForUser(userId: string): Promise<OrderSummary[]>
         })),
     }));
 }
+
+export type AdminOrder = {
+    id: string;
+    createdAt: string;
+    status: OrderStatus;
+    totalCents: number;
+    currency: string;
+    email: string | null;
+    isGuest: boolean;
+    items: OrderItem[];
+};
+
+export async function listOrdersAdmin(status?: OrderStatus): Promise<AdminOrder[]> {
+    await connectDB();
+    const docs = await Order.find(status ? { status } : {})
+        .sort({ createdAt: -1 })
+        .limit(100)
+        .lean();
+
+    return docs.map((d) => ({
+        id: String(d._id),
+        createdAt: d._id.getTimestamp().toISOString(),
+        status: d.status as OrderStatus,
+        totalCents: d.totalCents,
+        currency: d.currency,
+        email: d.email ?? null,
+        isGuest: !d.userId,
+        items: d.items.map((i) => ({
+            sku: i.sku,
+            slug: i.slug,
+            name: i.name,
+            size: i.size,
+            unitPriceCents: i.unitPriceCents,
+            qty: i.qty,
+        })),
+    }));
+}
+
+// Умовне оновлення: спрацьовує лише для оплаченого замовлення, повтор нічого не міняє
+export async function markOrderShipped(orderId: string): Promise<boolean> {
+    await connectDB();
+    const res = await Order.updateOne({ _id: orderId, status: "paid" }, { status: "shipped" });
+    return res.modifiedCount === 1;
+}
+
+export async function getOrderStats() {
+    await connectDB();
+    const rows = await Order.aggregate<{ _id: OrderStatus; count: number; total: number }>([
+        { $group: { _id: "$status", count: { $sum: 1 }, total: { $sum: "$totalCents" } } },
+    ]);
+
+    const by = new Map(rows.map((r) => [r._id, r]));
+    return {
+        // виручка = оплачені + відправлені (повернені й скасовані не рахуємо)
+        revenueCents: (by.get("paid")?.total ?? 0) + (by.get("shipped")?.total ?? 0),
+        counts: {
+            pending: by.get("pending")?.count ?? 0,
+            paid: by.get("paid")?.count ?? 0,
+            shipped: by.get("shipped")?.count ?? 0,
+            cancelled: by.get("cancelled")?.count ?? 0,
+            refunded: by.get("refunded")?.count ?? 0,
+        },
+    };
+}
