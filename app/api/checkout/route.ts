@@ -3,6 +3,7 @@ import { z } from "zod";
 import { CheckoutError } from "@/server/modules/orders/order.service";
 import { createCheckoutSession } from "@/server/modules/payments/checkout.service";
 import { auth } from "@/server/lib/auth";
+import { rateLimit } from "@/server/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -14,6 +15,15 @@ const bodySchema = z.object({
 });
 
 export async function POST(req: Request) {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    const limit = await rateLimit(`checkout:${ip}`, 10, 60_000); // 10 запитів на хвилину з однієї адреси
+    if (!limit.ok) {
+        return NextResponse.json(
+            { error: "Too many requests. Please try again shortly." },
+            { status: 429, headers: { "Retry-After": String(limit.retryAfterSec) } },
+        );
+    }
+
     const json = await req.json().catch(() => null);
     const parsed = bodySchema.safeParse(json);
     if (!parsed.success) {
@@ -27,7 +37,6 @@ export async function POST(req: Request) {
     try {
         const session = await auth.api.getSession({ headers: req.headers });
         const url = await createCheckoutSession(lines, session?.user.id, session?.user.email);
-        // const url = await createCheckoutSession(lines);
         return NextResponse.json({ url });
     } catch (e) {
         if (e instanceof CheckoutError) {
