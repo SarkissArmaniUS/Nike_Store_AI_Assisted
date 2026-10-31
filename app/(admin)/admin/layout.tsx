@@ -19,6 +19,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
                         <nav aria-label="Admin" className="flex gap-4 text-muted">
                             <Link href="/admin" className="hover:text-ink">Overview</Link>
                             <Link href="/admin/orders" className="hover:text-ink">Orders</Link>
+                            <Link href="/admin/products" className="hover:text-ink">Products</Link>
                         </nav>
                     </div>
                     <div className="flex items-center gap-4 text-muted">
