@@ -1,28 +1,23 @@
-import Link from "next/link";
-import { ShoeArt } from "@/components/shop/shoe-art";
+import { RouteHero } from "@/components/shop/route-hero";
+
+const base = (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000").replace(/\/$/, "");
+
+const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+        { "@type": "Organization", name: "Northline", url: base },
+        { "@type": "WebSite", name: "Northline", url: base },
+    ],
+};
 
 export default function HomePage() {
     return (
-        <section className="mx-auto max-w-7xl px-6 pb-24 pt-16 md:pt-28">
-            <p className="text-xs uppercase tracking-[0.2em] text-muted">Autumn / Winter 2026</p>
-            <h1 className="mt-6 max-w-4xl font-display text-6xl leading-[0.95] tracking-tight md:text-8xl">
-                Built for the <em className="text-accent">long way</em> home.
-            </h1>
-            <div className="mt-10 flex flex-wrap items-center gap-6">
-                <Link
-                    href="/products"
-                    className="bg-ink px-8 py-4 text-sm text-paper transition-colors hover:bg-accent"
-                >
-                    Shop the collection
-                </Link>
-                <Link href="/products?category=running" className="text-sm underline underline-offset-4">
-                    Explore running
-                </Link>
-            </div>
-            <div className="relative mt-16 aspect-[16/9] w-full overflow-hidden">
-                <ShoeArt seed="northline-hero" svgClassName="w-1/2 max-w-xl" />
-            </div>
-            {/*<div className="mt-16 aspect-[16/9] w-full bg-paper-2" />*/}
-        </section>
+        <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
+            />
+            <RouteHero />
+        </>
     );
 }

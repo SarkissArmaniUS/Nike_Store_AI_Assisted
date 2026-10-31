@@ -16,10 +16,17 @@ export function ProductCard({ product }: { product: ProductDTO }) {
                 sizes="(min-width: 768px) 33vw, 50vw"
             />
             <div className="mt-4 flex items-baseline justify-between gap-4">
-                <h3 className="font-display text-2xl tracking-tight">{product.name}</h3>
+                <h3 className="font-display text-3xl leading-none underline decoration-transparent decoration-2 underline-offset-4 transition-colors group-hover:decoration-accent">
+                    {product.name}
+                </h3>
                 <p className="text-sm">{formatPrice(product.priceCents, product.currency)}</p>
             </div>
-            <p className="mt-1 text-xs uppercase tracking-[0.2em] text-muted">{product.category}</p>
+            <p className="mt-1 text-sm capitalize text-muted">{product.category}</p>
+            {/*<div className="mt-4 flex items-baseline justify-between gap-4">*/}
+            {/*    <h3 className="font-display text-2xl tracking-tight">{product.name}</h3>*/}
+            {/*    <p className="text-sm">{formatPrice(product.priceCents, product.currency)}</p>*/}
+            {/*</div>*/}
+            {/*<p className="mt-1 text-xs uppercase tracking-[0.2em] text-muted">{product.category}</p>*/}
         </Link>
     );
 }
