@@ -13,7 +13,12 @@ export async function generateMetadata({ params }: PageProps<"/products/[slug]">
     return {
         title: product.name,
         description: product.description,
-        openGraph: { title: product.name, description: product.description, images: product.images },
+        alternates: { canonical: `/products/${product.slug}` },
+        openGraph: {
+            title: product.name,
+            description: product.description,
+            ...(product.images.length > 0 ? { images: product.images } : {}),
+        },
     };
 }
 
@@ -29,7 +34,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
         "@type": "Product",
         name: product.name,
         description: product.description,
-        image: product.images,
+        ...(product.images.length > 0 ? { image: product.images } : {}),
         sku: product.variants[0]?.sku,
         brand: { "@type": "Brand", name: "Northline" },
         offers: {
@@ -54,9 +59,6 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
                 sizes="(min-width: 768px) 50vw, 100vw"
                 priority
             />
-
-            {/* Заміниш на next/image, коли з'являться фото */}
-            {/*<div className="aspect-[4/5] w-full bg-paper-2" />*/}
 
             <div className="md:pt-8">
                 <p className="text-xs uppercase tracking-[0.2em] text-muted">{product.category}</p>

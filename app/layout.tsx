@@ -18,6 +18,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
   title: { default: "Northline", template: "%s | Northline" },
   description: "Footwear built for the long way home.",
+    openGraph: { siteName: "Northline", type: "website", locale: "en_US" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

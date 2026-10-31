@@ -28,7 +28,6 @@ export type CreatedOrder = { id: string; currency: string; totalCents: number; i
 export async function createPendingOrder(lines: Line[]): Promise<CreatedOrder> {
     await connectDB();
 
-    // 1. Беремо ціни й назви з бази, а не з браузера
     const skus = lines.map((l) => l.sku);
     const products = await Product.find({ isActive: true, "variants.sku": { $in: skus } }).lean();
 
@@ -67,7 +66,6 @@ export async function createPendingOrder(lines: Line[]): Promise<CreatedOrder> {
 
     const totalCents = items.reduce((sum, i) => sum + i.unitPriceCents * i.qty, 0);
 
-    // 2. Резервуємо склад і створюємо замовлення в одній транзакції
     const session = await mongoose.startSession();
     let result: CreatedOrder | undefined;
     try {
@@ -97,8 +95,6 @@ export async function createPendingOrder(lines: Line[]): Promise<CreatedOrder> {
     return result;
 }
 
-// Скасовує pending-замовлення і повертає склад. Безпечно викликати кілька разів:
-// склад повертає лише той виклик, який справді змінив pending -> cancelled.
 export async function cancelPendingOrder(orderId: string) {
     await connectDB();
     const session = await mongoose.startSession();
@@ -109,7 +105,7 @@ export async function cancelPendingOrder(orderId: string) {
                 { status: "cancelled" },
                 { session },
             );
-            if (!order) return; // уже оброблене
+            if (!order) return;
 
             for (const it of order.items) {
                 await Product.updateOne(
@@ -126,7 +122,6 @@ export async function cancelPendingOrder(orderId: string) {
 
 export type PaidResult = "paid" | "already_processed" | "not_found" | "mismatch";
 
-// Лише pending -> paid. Повторний виклик нічого не змінює, тому ідемпотентний.
 export async function markOrderPaid(
     orderId: string,
     data: { amountTotal: number | null; currency: string | null; paymentIntentId?: string; email?: string },
@@ -135,7 +130,6 @@ export async function markOrderPaid(
     const order = await Order.findById(orderId);
     if (!order) return "not_found";
 
-    // Сума й валюта від Stripe мають збігатися з тим, що ми порахували на сервері
     if (data.amountTotal !== order.totalCents || data.currency?.toLowerCase() !== order.currency) {
         console.error("Payment mismatch", { orderId, expected: order.totalCents, got: data.amountTotal });
         return "mismatch";
@@ -147,7 +141,6 @@ export async function markOrderPaid(
     );
 
     if (!updated && order.status === "cancelled") {
-        // Гроші прийшли за скасоване замовлення: потрібне ручне повернення коштів
         console.error("Paid after cancel, refund needed", { orderId });
     }
     return updated ? "paid" : "already_processed";

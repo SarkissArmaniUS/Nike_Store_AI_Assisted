@@ -38,7 +38,6 @@ export type ProductDetailDTO = ProductDTO & {
     variants: { sku: string; color: string; size: number; stock: number }[];
 };
 
-// cache() не дає робити два запити до бази: generateMetadata і сторінка викликають її в одному рендері
 export const getProductBySlug = cache(async (slug: string): Promise<ProductDetailDTO | null> => {
     await connectDB();
     const d = await Product.findOne({ slug, isActive: true }).lean();
