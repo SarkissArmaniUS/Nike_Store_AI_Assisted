@@ -73,6 +73,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
                             name: product.name,
                             priceCents: product.priceCents,
                             currency: product.currency,
+                            image: product.images[0],
                         }}
                         variants={product.variants}
                     />
