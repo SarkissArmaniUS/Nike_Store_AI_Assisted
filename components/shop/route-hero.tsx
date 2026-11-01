@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
 import { Contours } from "@/components/ui/contours";
+import { RouteMap } from "./route-map";
 
 const LINES = ["Built for", "the long way", "home."];
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -71,29 +72,31 @@ export function RouteHero() {
                     </Link>
                 </div>
 
-                <svg viewBox="0 0 1200 140" className="mt-14 h-auto w-full" fill="none" aria-hidden>
-                    <motion.path
-                        d="M4 112 C 150 112, 210 28, 380 48 S 620 130, 780 84 S 980 14, 1130 62"
-                        className="stroke-accent"
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        vectorEffect="non-scaling-stroke"
-                        initial={reduce ? false : { pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 1.8, delay: 0.5, ease: "easeInOut" }}
-                    />
-                    <circle cx="4" cy="112" r="5" className="fill-ink" />
-                    <motion.circle
-                        cx="1130"
-                        cy="62"
-                        r="8"
-                        className="fill-ink"
-                        style={{ transformBox: "fill-box", transformOrigin: "center" }}
-                        initial={reduce ? false : { scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 2.2, duration: 0.3 }}
-                    />
-                </svg>
+                <RouteMap />
+
+                {/*<svg viewBox="0 0 1200 140" className="mt-14 h-auto w-full" fill="none" aria-hidden>*/}
+                {/*    <motion.path*/}
+                {/*        d="M4 112 C 150 112, 210 28, 380 48 S 620 130, 780 84 S 980 14, 1130 62"*/}
+                {/*        className="stroke-accent"*/}
+                {/*        strokeWidth="3"*/}
+                {/*        strokeLinecap="round"*/}
+                {/*        vectorEffect="non-scaling-stroke"*/}
+                {/*        initial={reduce ? false : { pathLength: 0 }}*/}
+                {/*        animate={{ pathLength: 1 }}*/}
+                {/*        transition={{ duration: 1.8, delay: 0.5, ease: "easeInOut" }}*/}
+                {/*    />*/}
+                {/*    <circle cx="4" cy="112" r="5" className="fill-ink" />*/}
+                {/*    <motion.circle*/}
+                {/*        cx="1130"*/}
+                {/*        cy="62"*/}
+                {/*        r="8"*/}
+                {/*        className="fill-ink"*/}
+                {/*        style={{ transformBox: "fill-box", transformOrigin: "center" }}*/}
+                {/*        initial={reduce ? false : { scale: 0 }}*/}
+                {/*        animate={{ scale: 1 }}*/}
+                {/*        transition={{ delay: 2.2, duration: 0.3 }}*/}
+                {/*    />*/}
+                {/*</svg>*/}
             </div>
         </section>
     );
