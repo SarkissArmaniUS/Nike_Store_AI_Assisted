@@ -11,6 +11,11 @@ const itemSchema = z.object({
     priceCents: z.number().int().nonnegative(),
     currency: z.string(),
     qty: z.number().int().min(1).max(MAX_QTY),
+    image: z
+        .string()
+        .regex(/^\/products\/[\w.-]+$/)
+        .optional()
+        .catch(undefined),
 });
 
 export type CartItem = z.infer<typeof itemSchema>;
