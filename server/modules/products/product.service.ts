@@ -55,3 +55,14 @@ export const getProductBySlug = cache(async (slug: string): Promise<ProductDetai
         variants: d.variants.map((v) => ({ sku: v.sku, color: v.color, size: v.size, stock: v.stock })),
     };
 });
+
+export async function findDemoSku(): Promise<string | null> {
+    await connectDB();
+    const p = await Product.findOne({ isActive: true, variants: { $elemMatch: { stock: { $gte: 1 } } } })
+        .sort({ createdAt: 1 })
+        .lean();
+    if (!p) return null;
+
+    const variant = p.variants.find((v) => v.size === 42 && v.stock >= 1) ?? p.variants.find((v) => v.stock >= 1);
+    return variant?.sku ?? null;
+}
